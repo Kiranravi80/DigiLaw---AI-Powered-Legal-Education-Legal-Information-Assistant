@@ -3,6 +3,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from django.conf import settings
+from mongoengine import NotUniqueError, ValidationError
 import jwt
 from datetime import datetime, timedelta
 from .models import User, Chat, Message, Bookmark, DisclaimerAcceptance, UserSettings
@@ -23,22 +24,38 @@ def generate_tokens(user):
 def register(request):
     data = request.data
     try:
-        if User.objects(email=data['email']).first():
+        full_name = (data.get('fullName') or '').strip()
+        email = (data.get('email') or '').strip().lower()
+        mobile = (data.get('mobile') or '').strip()
+        password = data.get('password') or ''
+        confirm_password = data.get('confirmPassword') or ''
+
+        if not all([full_name, email, mobile, password, confirm_password]):
+            return Response({'error': 'Please fill all required fields'}, status=400)
+
+        if len(full_name) > 100:
+            return Response({'error': 'Full name must be 100 characters or fewer'}, status=400)
+
+        if len(mobile) > 15:
+            return Response({'error': 'Mobile number must be 15 characters or fewer'}, status=400)
+
+        if User.objects(email=email).first():
             return Response({'error': 'Email already exists'}, status=400)
         
-        if data['password'] != data['confirmPassword']:
+        if password != confirm_password:
             return Response({'error': 'Passwords do not match'}, status=400)
         
         user = User(
-            full_name=data['fullName'],
-            email=data['email'],
-            mobile=data['mobile']
+            full_name=full_name,
+            email=email,
+            mobile=mobile
         )
-        user.set_password(data['password'])
+        user.set_password(password)
         user.save()
         
         # Create default settings
-        UserSettings(user=user).save()
+        if not UserSettings.objects(user=user).first():
+            UserSettings(user=user).save()
         
         tokens = generate_tokens(user)
         return Response({
@@ -46,6 +63,10 @@ def register(request):
             'tokens': tokens,
             'user': {'id': str(user.id), 'full_name': user.full_name, 'email': user.email}
         })
+    except NotUniqueError:
+        return Response({'error': 'Email already exists'}, status=400)
+    except ValidationError as e:
+        return Response({'error': e.message or 'Invalid registration details'}, status=400)
     except Exception as e:
         return Response({'error': str(e)}, status=400)
 

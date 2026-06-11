@@ -20,7 +20,12 @@ export default function RegisterPage() {
     }
     setLoading(true)
     try {
-      await register(form)
+      await register({
+        ...form,
+        fullName: form.fullName.trim(),
+        email: form.email.trim().toLowerCase(),
+        mobile: form.mobile.trim(),
+      })
       navigate('/app')
     } catch (err) {
       setError(err.response?.data?.error || 'Registration failed')

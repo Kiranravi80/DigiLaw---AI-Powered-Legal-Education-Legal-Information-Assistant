@@ -2,10 +2,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FiShield, FiPlus, FiMessageSquare, FiBookmark, FiUser, FiSettings, FiLogOut, FiX, FiTrash2, FiEdit2 } from 'react-icons/fi'
 import { useAuth } from '../context/AuthContext'
-import axios from 'axios'
+import { api } from '../services/api'
 import { useState } from 'react'
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 export default function Sidebar({ chats, activeChat, onNewChat, onSelectChat, isOpen, onToggle, onChatsUpdate }) {
   const { user, logout } = useAuth()
@@ -18,7 +16,7 @@ export default function Sidebar({ chats, activeChat, onNewChat, onSelectChat, is
     e.stopPropagation()
     if (!confirm('Delete this chat?')) return
     try {
-      await axios.delete(`${API_URL}/api/chats/${id}/`)
+      await api.delete(`/api/chats/${id}/`)
       onChatsUpdate()
       if (activeChat === id) navigate('/app')
     } catch {}
@@ -26,7 +24,7 @@ export default function Sidebar({ chats, activeChat, onNewChat, onSelectChat, is
 
   const handleRename = async (id) => {
     try {
-      await axios.put(`${API_URL}/api/chats/${id}/`, { title: editTitle })
+      await api.put(`/api/chats/${id}/`, { title: editTitle })
       setEditingId(null)
       onChatsUpdate()
     } catch {}

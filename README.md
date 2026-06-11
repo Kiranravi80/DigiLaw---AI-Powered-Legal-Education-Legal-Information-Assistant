@@ -198,120 +198,82 @@ VITE_API_URL=http://localhost:8000
 ## API Modules
 
 ### Authentication
-- `POST /api/auth/register/` - Register
-- `POST /api/auth/login/` - Login
-- `POST /api/disclaimer/accept/` - Accept disclaimer
 
-### Chats
-- `GET /api/chats/` - List chats
-- `POST /api/chats/` - Create chat
-- `GET /api/chats/:id/` - Get chat with messages
-- `POST /api/chats/:id/message/` - Send message (AI response)
-- `PUT /api/chats/:id/` - Rename
-- `DELETE /api/chats/:id/` - Delete
+* User Registration
+* User Login
+* JWT Token Management
 
-### Other
-- `POST /api/action/` - Smart action buttons
-- `GET/POST /api/bookmarks/` - Bookmarks
-- `GET/PUT /api/profile/` - Profile
-- `GET/PUT /api/settings/` - Settings
+### Legal Assistant
 
-## MongoDB Collections
+* AI Chat Processing
+* Legal Context Retrieval
+* Structured Legal Responses
 
-- **users** - User accounts (bcrypt hashed passwords)
-- **chats** - Chat sessions
-- **messages** - User and AI messages with structured_data
-- **bookmarks** - Saved laws/responses
-- **disclaimer_acceptances** - Legal disclaimer tracking
-- **user_settings** - Theme and preferences
+### User Management
 
-## RAG Architecture
+* Profile Management
+* Preferences
+* Theme Settings
 
-1. User asks question
-2. ChromaDB searches legal_data JSON files (Constitution, BNS, IT Act, etc.)
-3. Top 5 relevant chunks retrieved
-4. Context + question sent to Groq Llama 3
-5. Structured JSON response generated
-6. Response saved to MongoDB
+### Bookmark System
 
-## Legal Knowledge Base
+* Save Responses
+* Organize Legal References
 
-Add more laws in `backend/legal_data/` as JSON:
+---
 
-```json
-{
-  "Section 66": "Computer related offences...",
-  "Section 67": "Publishing obscene material..."
-}
-```
+## Security Measures
 
-ChromaDB auto-indexes on first run.
+* JWT-based authentication
+* Password hashing
+* Request validation
+* Protected routes
+* CORS protection
+* Mandatory legal disclaimer acceptance
 
-## AI Response Structure
+---
 
-Every response includes:
-1. Quick Summary
-2. Law Overview
-3. Why This Law Exists
-4. Important Concepts
-5. Rights
-6. Duties
-7. Procedure
-8. Penalties
-9. Real-Life Example
-10. Recent Amendments
-11. Related Laws
+## Future Roadmap
 
-## Smart Actions
+### Version 2
 
-After each response:
-- Explain More
-- Show Example
-- Show Rights
-- Show Procedure
-- Show Penalties
-- Simplify
-- Translate
+* Multilingual legal assistance
+* Voice-based legal queries
+* Legal document summarization
+* FIR analysis
+* Lawyer recommendation system
+* Court case information retrieval
+* Mobile application
 
-## Security
+### Version 3
 
-- JWT tokens (7-day expiry)
-- Bcrypt password hashing
-- CORS protection
-- Input validation
-- Protected routes
-- Disclaimer mandatory
+* AI-powered legal document generation
+* Legal workflow automation
+* Advanced legal research tools
+* Lawyer dashboard
+* Case management system
 
-## Deployment
+---
 
-### Production Checklist
-1. Set `DEBUG=False`
-2. Change `SECRET_KEY`
-3. Use MongoDB Atlas
-4. Set `ALLOWED_HOSTS`
-5. Enable HTTPS
-6. Add rate limiting
-7. Use environment secrets
+## Use Cases
 
-### Docker Production
-```bash
-docker-compose -f docker-compose.prod.yml up -d
-```
+### Citizens
 
-## Development Notes
+Understand legal rights, duties, and procedures.
 
-- No admin dashboard (by design)
-- No role management (users only)
-- All chats stored in MongoDB
-- ChromaDB persists in `./backend/chroma_db`
-- First AI query initializes vector DB (~30 seconds)
+### Students
 
-## Limitations
+Learn legal concepts through AI-assisted education.
 
-- Educational only, not legal advice
-- AI can make mistakes
-- Indian laws focus (can extend)
-- Groq free tier: rate limits apply
+### Researchers
+
+Explore legal information quickly and efficiently.
+
+### Legal Awareness Programs
+
+Promote legal literacy among communities.
+
+---
 
 ## License
 

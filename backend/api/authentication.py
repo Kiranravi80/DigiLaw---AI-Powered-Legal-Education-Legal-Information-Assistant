@@ -5,6 +5,9 @@ from rest_framework.exceptions import AuthenticationFailed
 from .models import User
 
 class MongoJWTAuthentication(BaseAuthentication):
+    def authenticate_header(self, request):
+        return 'Bearer'
+
     def authenticate(self, request):
         auth_header = request.META.get('HTTP_AUTHORIZATION')
         if not auth_header or not auth_header.startswith('Bearer '):

@@ -2,10 +2,11 @@ import os
 from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
-
-load_dotenv()
+from urllib.parse import urlparse
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+load_dotenv(BASE_DIR / '.env')
 
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-digilaw-dev-key-change-in-production')
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
@@ -34,7 +35,13 @@ WSGI_APPLICATION = 'digilaw_backend.wsgi.application'
 # MongoDB Connection via mongoengine
 import mongoengine
 MONGODB_URI = os.getenv('MONGODB_URI', 'mongodb://localhost:27017/digilaw')
-mongoengine.connect(host=MONGODB_URI)
+MONGODB_DB_NAME = os.getenv('MONGODB_DB_NAME', 'digilaw')
+
+mongo_options = {'host': MONGODB_URI}
+if not urlparse(MONGODB_URI).path.strip('/'):
+    mongo_options['db'] = MONGODB_DB_NAME
+
+mongoengine.connect(**mongo_options)
 
 # REST Framework
 REST_FRAMEWORK = {

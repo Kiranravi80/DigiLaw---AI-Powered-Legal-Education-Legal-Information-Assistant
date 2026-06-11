@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import { api } from '../services/api'
 import { FiBookmark, FiTrash2 } from 'react-icons/fi'
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 export default function BookmarksPage() {
   const [bookmarks, setBookmarks] = useState([])
@@ -13,14 +11,14 @@ export default function BookmarksPage() {
 
   const loadBookmarks = async () => {
     try {
-      const res = await axios.get(`${API_URL}/api/bookmarks/`)
+      const res = await api.get('/api/bookmarks/')
       setBookmarks(res.data)
     } catch {}
   }
 
   const deleteBookmark = async (id) => {
     try {
-      await axios.delete(`${API_URL}/api/bookmarks/${id}/`)
+      await api.delete(`/api/bookmarks/${id}/`)
       loadBookmarks()
     } catch {}
   }

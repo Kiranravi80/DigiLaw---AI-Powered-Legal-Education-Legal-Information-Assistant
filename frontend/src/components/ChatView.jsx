@@ -2,10 +2,8 @@ import { useState, useEffect, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FiSend, FiMic, FiMenu, FiShield } from 'react-icons/fi'
-import axios from 'axios'
+import { api } from '../services/api'
 import MessageBubble from './MessageBubble'
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 const SUGGESTED = [
   "What is Cybercrime?",
@@ -34,7 +32,7 @@ export default function ChatView({ onNewChat, sidebarOpen, onToggleSidebar }) {
 
   const loadChat = async () => {
     try {
-      const res = await axios.get(`${API_URL}/api/chats/${id}/`)
+      const res = await api.get(`/api/chats/${id}/`)
       setChat(res.data.chat)
       setMessages(res.data.messages)
     } catch (e) {
@@ -53,12 +51,12 @@ export default function ChatView({ onNewChat, sidebarOpen, onToggleSidebar }) {
     try {
       let chatId = id
       if (!chatId) {
-        const newChat = await axios.post(`${API_URL}/api/chats/`, { title: text.slice(0, 50) })
+        const newChat = await api.post('/api/chats/', { title: text.slice(0, 50) })
         chatId = newChat.data.id
         window.history.replaceState(null, '', `/app/chat/${chatId}`)
       }
 
-      const res = await axios.post(`${API_URL}/api/chats/${chatId}/message/`, { message: text })
+      const res = await api.post(`/api/chats/${chatId}/message/`, { message: text })
       setMessages(prev => [...prev, res.data.message])
     } catch (e) {
       setMessages(prev => [...prev, { role: 'assistant', content: 'Sorry, error occurred. Please try again.', created_at: new Date().toISOString() }])

@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+import { api } from '../services/api'
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState({ full_name: '', email: '', mobile: '' })
@@ -15,7 +13,7 @@ export default function ProfilePage() {
 
   const loadProfile = async () => {
     try {
-      const res = await axios.get(`${API_URL}/api/profile/`)
+      const res = await api.get('/api/profile/')
       setProfile(res.data)
     } catch {}
   }
@@ -24,7 +22,7 @@ export default function ProfilePage() {
     e.preventDefault()
     setLoading(true)
     try {
-      await axios.put(`${API_URL}/api/profile/`, { ...profile, password: password || undefined })
+      await api.put('/api/profile/', { ...profile, password: password || undefined })
       setMessage('Profile updated successfully')
       setPassword('')
     } catch {

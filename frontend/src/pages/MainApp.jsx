@@ -5,9 +5,7 @@ import ChatView from '../components/ChatView'
 import ProfilePage from './ProfilePage'
 import SettingsPage from './SettingsPage'
 import BookmarksPage from './BookmarksPage'
-import axios from 'axios'
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+import { api } from '../services/api'
 
 export default function MainApp() {
   const [chats, setChats] = useState([])
@@ -21,7 +19,7 @@ export default function MainApp() {
 
   const loadChats = async () => {
     try {
-      const res = await axios.get(`${API_URL}/api/chats/`)
+      const res = await api.get('/api/chats/')
       setChats(res.data)
     } catch (e) {
       console.error(e)
@@ -30,7 +28,7 @@ export default function MainApp() {
 
   const createNewChat = async () => {
     try {
-      const res = await axios.post(`${API_URL}/api/chats/`, { title: 'New Chat' })
+      const res = await api.post('/api/chats/', { title: 'New Chat' })
       const newChat = res.data
       setChats([newChat, ...chats])
       setActiveChat(newChat.id)

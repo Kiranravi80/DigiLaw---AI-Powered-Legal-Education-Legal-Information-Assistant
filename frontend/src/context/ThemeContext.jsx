@@ -1,10 +1,8 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import axios from 'axios'
+import { api } from '../services/api'
 
 const ThemeContext = createContext()
 export const useTheme = () => useContext(ThemeContext)
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState('system')
@@ -33,7 +31,7 @@ export const ThemeProvider = ({ children }) => {
       return
     }
     try {
-      const res = await axios.get(`${API_URL}/api/settings/`)
+      const res = await api.get('/api/settings/')
       setTheme(res.data.theme)
       setFontSize(res.data.font_size)
     } catch {}
@@ -54,7 +52,7 @@ export const ThemeProvider = ({ children }) => {
     const token = localStorage.getItem('token')
     if (token) {
       try {
-        await axios.put(`${API_URL}/api/settings/`, { theme: newTheme, font_size: fontSize })
+        await api.put('/api/settings/', { theme: newTheme, font_size: fontSize })
       } catch {}
     }
   }
@@ -64,7 +62,7 @@ export const ThemeProvider = ({ children }) => {
     const token = localStorage.getItem('token')
     if (token) {
       try {
-        await axios.put(`${API_URL}/api/settings/`, { theme, font_size: size })
+        await api.put('/api/settings/', { theme, font_size: size })
       } catch {}
     }
   }

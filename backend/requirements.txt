@@ -5,7 +5,9 @@ django-cors-headers==4.3.1
 mongoengine==0.27.0
 pymongo==4.6.1
 groq==0.9.0
+httpx<0.28
 chromadb==0.4.24
+posthog<4
 python-dotenv==1.0.1
 bcrypt==4.1.2
 gunicorn==21.2.0

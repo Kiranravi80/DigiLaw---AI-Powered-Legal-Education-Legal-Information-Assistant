@@ -1,9 +1,7 @@
 import { motion } from 'framer-motion'
 import { FiShield, FiUser, FiBookmark, FiCopy, FiChevronDown } from 'react-icons/fi'
 import { useState } from 'react'
-import axios from 'axios'
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+import { api } from '../services/api'
 
 export default function MessageBubble({ message }) {
   const isUser = message.role === 'user'
@@ -15,7 +13,7 @@ export default function MessageBubble({ message }) {
   const handleAction = async (action) => {
     setActionLoading(action)
     try {
-      const res = await axios.post(`${API_URL}/api/action/`, {
+      const res = await api.post('/api/action/', {
         action,
         question: message.content,
         data: data
@@ -30,7 +28,7 @@ export default function MessageBubble({ message }) {
 
   const bookmark = async () => {
     try {
-      await axios.post(`${API_URL}/api/bookmarks/`, {
+      await api.post('/api/bookmarks/', {
         title: message.content.slice(0, 100),
         content: JSON.stringify(data || message.content),
         category: 'response'

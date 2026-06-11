@@ -4,11 +4,34 @@ import json
 
 class GroqService:
     def __init__(self):
-        self.client = Groq(api_key=settings.GROQ_API_KEY)
+        self.client = None
+        self.initialization_error = None
         self.model = "llama3-70b-8192"
+
+        try:
+            self.client = Groq(api_key=settings.GROQ_API_KEY)
+        except Exception as e:
+            self.initialization_error = str(e)
+
+    def _fallback_response(self, error):
+        return {
+            "quick_summary": "Unable to generate a detailed AI response right now. Please check the backend AI configuration and try again.",
+            "law_overview": f"AI service error: {error}",
+            "why_exists": "Legal education is important for awareness.",
+            "important_concepts": [],
+            "rights": [],
+            "duties": [],
+            "procedure": [],
+            "penalties": [],
+            "real_life_example": "",
+            "recent_amendments": "None",
+            "related_laws": []
+        }
     
     def generate_legal_response(self, user_question, context=""):
         """Generate structured legal education response"""
+        if not self.client:
+            return self._fallback_response(self.initialization_error or "Groq client is not initialized")
         
         system_prompt = """You are DigiLaw, an AI-Powered Legal Education Assistant for Indian law. You are NOT a lawyer and do NOT provide legal advice.
 
@@ -66,20 +89,7 @@ Provide educational response in JSON format only. No markdown, no extra text, ju
             structured = json.loads(content)
             return structured
         except Exception as e:
-            # Fallback structure
-            return {
-                "quick_summary": "Unable to generate detailed response. Please try again.",
-                "law_overview": f"Error: {str(e)}",
-                "why_exists": "Legal education is important for awareness.",
-                "important_concepts": [],
-                "rights": [],
-                "duties": [],
-                "procedure": [],
-                "penalties": [],
-                "real_life_example": "",
-                "recent_amendments": "None",
-                "related_laws": []
-            }
+            return self._fallback_response(str(e))
     
     def generate_action_response(self, action, original_data, user_question):
         """Generate specific action responses"""
@@ -95,6 +105,9 @@ Provide educational response in JSON format only. No markdown, no extra text, ju
         }
         
         prompt = prompts.get(action, user_question)
+
+        if not self.client:
+            return f"Unable to process request: {self.initialization_error or 'Groq client is not initialized'}"
         
         try:
             response = self.client.chat.completions.create(

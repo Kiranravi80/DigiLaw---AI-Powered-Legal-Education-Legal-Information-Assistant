@@ -1,10 +1,14 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
 # Backend
 backend/venv/
-backend/__pycache__/
 backend/*.sqlite3
 backend/chroma_db/
 backend/.env
-backend/*.pyc
 
 # Frontend
 frontend/node_modules/

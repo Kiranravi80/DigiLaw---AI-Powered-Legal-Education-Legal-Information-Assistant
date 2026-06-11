@@ -1,11 +1,15 @@
 import chromadb
+from chromadb.config import Settings
 from django.conf import settings
 import os
 import json
 
 class ChromaService:
     def __init__(self):
-        self.client = chromadb.PersistentClient(path=settings.CHROMA_PERSIST_DIR)
+        self.client = chromadb.PersistentClient(
+            path=settings.CHROMA_PERSIST_DIR,
+            settings=Settings(anonymized_telemetry=False)
+        )
         self.collection = self.client.get_or_create_collection(
             name="legal_knowledge",
             metadata={"hnsw:space": "cosine"}
