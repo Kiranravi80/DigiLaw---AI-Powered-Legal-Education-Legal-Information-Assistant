@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+export const API_URL = import.meta.env.VITE_API_URL || 'https://digilaw.onrender.com'
 
 export const api = axios.create({
   baseURL: API_URL,
