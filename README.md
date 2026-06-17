@@ -1,4 +1,6 @@
 # DigiLaw – AI-Powered Legal Education & Legal Information Assistant
+<img width="1919" height="915" alt="image" src="https://github.com/user-attachments/assets/3ca95353-92ce-46d0-820c-c4cda6266704" />
+
 
 > Making Indian legal knowledge accessible, understandable, and available to everyone.
 
